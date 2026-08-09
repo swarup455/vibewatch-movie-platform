@@ -26,19 +26,19 @@ import {
 } from "lucide-react";
 
 const items = [
-    { title: "Chat", url: "/chat", icon: MessageSquare },
     { title: "Discover", url: "/discover", icon: Compass },
+    { title: "Chat", url: "/chat", icon: MessageSquare },
     { title: "Collections", url: "/collections", icon: Library },
 ];
 
 const footerItems = [
-    { title: "Profile", icon: User },
-    { title: "Settings", icon: Settings },
+    { title: "Profile", url: "/profile", icon: User },
+    { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
     const pathname = usePathname();
-
+    
     return (
         <Sidebar className="overflow-hidden">
             {/* HEADER — Brand */}
@@ -106,18 +106,17 @@ export function AppSidebar() {
                 <SidebarMenu className="gap-1">
                     {footerItems.map((item) => (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton className="h-9 rounded-lg px-3 text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-foreground">
-                                <item.icon size={16} />
-                                <span>{item.title}</span>
+                            <SidebarMenuButton
+                                asChild
+                                className="h-9 rounded-lg px-3 text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
+                            >
+                                <Link href={item.url}>
+                                    <item.icon size={16} />
+                                    <span>{item.title}</span>
+                                </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     ))}
-                    <SidebarMenuItem>
-                        <SidebarMenuButton className="h-9 rounded-lg px-3 text-sm text-destructive hover:bg-destructive/10 hover:text-destructive">
-                            <LogOut size={16} />
-                            <span>Sign out</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
         </Sidebar>

@@ -72,10 +72,10 @@ export default function Home() {
 
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="rounded-full text-sm" asChild>
-              <Link href="/signin">Sign In</Link>
+              <Link href="/auth">Sign In</Link>
             </Button>
             <Button size="sm" className="rounded-full px-4 text-sm" asChild>
-              <Link href="/signup">Get Started</Link>
+              <Link href="/auth">Get Started</Link>
             </Button>
           </div>
         </div>
