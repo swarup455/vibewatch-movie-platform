@@ -139,3 +139,11 @@
     @apply font-sans;
   }
 }
+
+html,
+body,
+:root,
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none !important;
+}
