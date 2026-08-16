@@ -24,6 +24,8 @@ import {
     Settings,
     LogOut,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useUser } from "@/context/UserContext";
 
 const items = [
     { title: "Discover", url: "/discover", icon: Compass },
@@ -38,7 +40,13 @@ const footerItems = [
 
 export function AppSidebar() {
     const pathname = usePathname();
-    
+    const { user, loading } = useUser();
+    const [name, setName] = useState("");
+
+    useEffect(() => {
+        if (user) setName(user.name);
+    }, [user]);
+
     return (
         <Sidebar className="overflow-hidden">
             {/* HEADER — Brand */}
@@ -95,7 +103,7 @@ export function AppSidebar() {
                     </Avatar>
                     <div className="flex flex-col leading-tight">
                         <span className="text-sm font-medium text-foreground">
-                            Swarup
+                            {name}
                         </span>
                         <span className="text-xs text-muted-foreground">
                             Free plan

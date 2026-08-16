@@ -10,12 +10,26 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  provider      String   // "google", "github", etc.
+  providerId    String   // id from provider
+  refreshTokens RefreshToken[]
+  createdAt     DateTime @default(now())
+
+  @@unique([provider, providerId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
   createdAt DateTime @default(now())
 }

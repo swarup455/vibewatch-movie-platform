@@ -10,12 +10,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "next-themes"; // swap/remove if you don't have next-themes set up
 
 export default function Navbar() {
-    const pathname = usePathname();
-    const { theme, setTheme } = useTheme();
-
     return (
         <header className="sticky top-0 z-50 flex justify-center px-4">
             <div className="w-full max-w-6xl bg-background/70 backdrop-blur-md shadow-sm">
@@ -65,16 +61,6 @@ export default function Navbar() {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-9 w-9 rounded-full"
-                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                        >
-                            <Sun className="h-[17px] w-[17px] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-[17px] w-[17px] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                        </Button>
                     </div>
 
                 </div>

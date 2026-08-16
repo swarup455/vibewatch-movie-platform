@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Play, Info, Sparkles, Users, Zap, ShieldCheck, Clapperboard } from "lucide-react";
-import { FaGithub as Github, FaXTwitter as Twitter, FaInstagram as Instagram } from "react-icons/fa6";
+import { FaGithub as Github, FaXTwitter as Twitter, FaInstagram as Instagram, FaSpinner } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Autoplay from "embla-carousel-autoplay";
@@ -15,6 +15,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { getMe } from "@/api/auth";
 
 const trendingMovies = [
   { title: "Dune: Part Two", tag: "Sci-Fi", rating: "8.8", img: "https://images.unsplash.com/photo-1534809027769-b00d750a6bac?w=400&q=80" },
@@ -55,6 +57,24 @@ const footerLinks = {
 };
 
 export default function Home() {
+  const [user, setUser] = useState<{ name: string } | null>(null);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    getMe().then((u) => {
+      setUser(u);
+      setChecked(true);
+    });
+  }, []);
+
+  if (!checked) {
+    return (
+      <div className="fixed inset-0 flex justify-center items-center">
+        <FaSpinner className="animate-spin text-white" />
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 font-sans dark:bg-black">
       {/* NAVBAR */}
@@ -71,12 +91,18 @@ export default function Home() {
           </Link>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="rounded-full text-sm" asChild>
-              <Link href="/auth">Sign In</Link>
-            </Button>
-            <Button size="sm" className="rounded-full px-4 text-sm" asChild>
-              <Link href="/auth">Get Started</Link>
-            </Button>
+            {user ?
+              (
+                <Link href="/discover">
+                  <Button>Dashboard</Button>
+                </Link>
+              ) : (
+                <div className="flex gap-2">
+                  <Link href="/auth"><Button variant="ghost">Sign in</Button></Link>
+                  <Link href="/auth"><Button>Get started</Button></Link>
+                </div>
+              )
+            }
           </div>
         </div>
       </header>
@@ -105,7 +131,7 @@ export default function Home() {
 
         <div className="mt-8 flex items-center gap-3">
           <Button size="lg" className="gap-2 rounded-full px-6" asChild>
-            <Link href="/signup">
+            <Link href="/auth">
               <Play size={16} /> Get Started
             </Link>
           </Button>
@@ -234,7 +260,7 @@ export default function Home() {
               Join VibeWatch and let AI do the deciding.
             </p>
             <Button size="lg" className="mt-2 rounded-full px-8" asChild>
-              <Link href="/signup">Get Started Free</Link>
+              <Link href="/auth">Get Started Free</Link>
             </Button>
           </CardContent>
         </Card>

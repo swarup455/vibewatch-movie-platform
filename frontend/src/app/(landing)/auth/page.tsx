@@ -5,7 +5,7 @@ import { Clapperboard, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FaGoogle } from "react-icons/fa6";
-
+import { useRouter } from "next/navigation";
 const perks = [
     "Personalized picks powered by AI",
     "No spoilers, ever",
@@ -13,6 +13,37 @@ const perks = [
 ];
 
 export default function AuthPage() {
+    const router = useRouter();
+
+    const handleGoogleLogin = () => {
+        const width = 500;
+        const height = 600;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+
+        const popup = window.open(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`,
+            "vibewatch-oauth",
+            `width=${width},height=${height},left=${left},top=${top}`
+        );
+
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== process.env.NEXT_PUBLIC_API_URL) return;
+            if (event.data?.type !== "vibewatch-auth-success") return;
+
+            window.removeEventListener("message", handleMessage);
+            popup?.close();
+            router.push("/discover");
+        };
+
+        window.addEventListener("message", handleMessage);
+        const timer = setInterval(() => {
+            if (popup?.closed) {
+                clearInterval(timer);
+                window.removeEventListener("message", handleMessage);
+            }
+        }, 500);
+    };
     return (
         <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-zinc-50 px-4 font-sans dark:bg-black">
             <div className="pointer-events-none absolute inset-0 -z-10">
@@ -57,12 +88,10 @@ export default function AuthPage() {
                             variant="outline"
                             size="lg"
                             className="w-full gap-2.5 rounded-full border-border/60 bg-background/50 backdrop-blur-md hover:bg-accent"
-                            asChild
+                            onClick={handleGoogleLogin}
                         >
-                            <a href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}>
-                                <FaGoogle />
-                                Continue with Google
-                            </a>
+                            <FaGoogle />
+                            Continue with Google
                         </Button>
 
                         <p className="text-center text-xs leading-relaxed text-muted-foreground">
