@@ -107,6 +107,7 @@ export const refreshAccessToken = asyncHandler(async (req: Request, res: Respons
             sameSite: "lax",
             maxAge: 15 * 60 * 1000
         })
+        .json({ success: true });
 });
 
 export const logout = async (req: Request, res: Response) => {
