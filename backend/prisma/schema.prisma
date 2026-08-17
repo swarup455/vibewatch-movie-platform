@@ -33,3 +33,38 @@ model RefreshToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
+
+model Movie {
+  id            String   @id @default(cuid())
+  tmdbId        Int      @unique
+  imdbId        String?  @unique
+
+  title         String
+  originalTitle String?
+  overview      String?  @db.Text
+
+  genres        String[]
+  keywords      String[]
+
+  releaseDate   DateTime?
+  runtime       Int?
+  originalLanguage String?
+
+  posterPath    String?
+  backdropPath  String?
+
+  youtubeTrailerId String?
+
+  popularity    Float    @default(0)
+  voteAverage   Float    @default(0)
+  voteCount     Int      @default(0)
+
+  embedding     Unsupported("vector(384)")?
+  embeddedAt    DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([popularity])
+  @@index([releaseDate])
+}
