@@ -1,3 +1,7 @@
+import "dotenv/config"
+import axios from "axios";
+import { ApiError } from "../utils/apiError.js";
+
 const TMDB_API_KEY = process.env.TMDB_API_KEY!;
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -18,38 +22,125 @@ interface TmdbGenre {
     name: string;
 }
 
-// Fetch a page of popular movies (basic fields only — title, overview, popularity, etc.)
-export async function fetchPopularMovies(page = 1) {
-    const res = await fetch(`${BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&page=${page}`);
-    if (!res.ok) throw new Error(`TMDB fetchPopularMovies failed: ${res.status}`);
-    const data = await res.json();
-    return data.results as any[];
-}
+// Fetch popular movies
+export const fetchPopularMoviesPage = async (page = 1) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/movie/popular`, {
+            params: {
+                api_key: TMDB_API_KEY,
+                page,
+            },
+        });
 
-// Fetch full movie details (runtime, original_title, original_language, genres, imdb_id, etc.)
-export async function fetchMovieDetails(tmdbId: number) {
-    const res = await fetch(`${BASE_URL}/movie/${tmdbId}?api_key=${TMDB_API_KEY}`);
-    if (!res.ok) throw new Error(`TMDB fetchMovieDetails failed for ${tmdbId}: ${res.status}`);
-    return res.json();
-}
+        return {
+            results: response.data.results as any[],
+            totalPages: response.data.total_pages as number,
+        };
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error("TMDB error code:", error.code);
+            console.error("TMDB error message:", error.message);
+            console.error("Response status:", error.response?.status);
+            console.error("Response data:", error.response?.data);
+        } else {
+            console.error("Non-axios error:", error);
+        }
+        throw new ApiError(502, "Failed to fetch movies");
+    }
+};
 
-// Fetch trailer video key (YouTube video ID), preferring official trailers
-export async function fetchMovieVideos(tmdbId: number): Promise<string | null> {
-    const res = await fetch(`${BASE_URL}/movie/${tmdbId}/videos?api_key=${TMDB_API_KEY}`);
-    if (!res.ok) throw new Error(`TMDB fetchMovieVideos failed for ${tmdbId}: ${res.status}`);
-    const data = await res.json();
-    const videos = data.results as TmdbVideo[];
+// Fetch full movie details
+export const fetchMovieDetails = async (tmdbId: number) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/movie/${tmdbId}`, {
+            params: {
+                api_key: TMDB_API_KEY,
+            },
+        });
 
-    const officialTrailer = videos.find((v) => v.site === "YouTube" && v.type === "Trailer" && v.official);
-    const anyTrailer = videos.find((v) => v.site === "YouTube" && v.type === "Trailer");
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error("TMDB error code:", error.code);
+            console.error("TMDB error message:", error.message);
+            console.error("Response status:", error.response?.status);
+            console.error("Response data:", error.response?.data);
+        } else {
+            console.error("Non-axios error:", error);
+        }
+        throw new ApiError(502, "Failed to fetch details for movie");
+    }
+};
 
-    return officialTrailer?.key ?? anyTrailer?.key ?? null;
-}
+// Fetch trailer video key
+export const fetchMovieVideos = async (
+    tmdbId: number
+): Promise<string | null> => {
+    try {
+        const response = await axios.get(
+            `${BASE_URL}/movie/${tmdbId}/videos`,
+            {
+                params: {
+                    api_key: TMDB_API_KEY,
+                },
+            }
+        );
 
-// Fetch keyword tags for a movie
-export async function fetchMovieKeywords(tmdbId: number): Promise<string[]> {
-    const res = await fetch(`${BASE_URL}/movie/${tmdbId}/keywords?api_key=${TMDB_API_KEY}`);
-    if (!res.ok) throw new Error(`TMDB fetchMovieKeywords failed for ${tmdbId}: ${res.status}`);
-    const data = await res.json();
-    return (data.keywords as TmdbKeyword[]).map((k) => k.name);
-}
+        const videos = response.data.results as TmdbVideo[];
+
+        const officialTrailer = videos.find(
+            (video) =>
+                video.site === "YouTube" &&
+                video.type === "Trailer" &&
+                video.official
+        );
+
+        const anyTrailer = videos.find(
+            (video) =>
+                video.site === "YouTube" &&
+                video.type === "Trailer"
+        );
+
+        return officialTrailer?.key ?? anyTrailer?.key ?? null;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error("TMDB error code:", error.code);
+            console.error("TMDB error message:", error.message);
+            console.error("Response status:", error.response?.status);
+            console.error("Response data:", error.response?.data);
+        } else {
+            console.error("Non-axios error:", error);
+        }
+        throw new ApiError(502, "Failed to fetch videos for movie");
+    }
+};
+
+// Fetch keyword tags
+export const fetchMovieKeywords = async (
+    tmdbId: number
+): Promise<string[]> => {
+    try {
+        const response = await axios.get(
+            `${BASE_URL}/movie/${tmdbId}/keywords`,
+            {
+                params: {
+                    api_key: TMDB_API_KEY,
+                },
+            }
+        );
+
+        const keywords = response.data.keywords as TmdbKeyword[];
+
+        return keywords.map((keyword) => keyword.name);
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error("TMDB error code:", error.code);
+            console.error("TMDB error message:", error.message);
+            console.error("Response status:", error.response?.status);
+            console.error("Response data:", error.response?.data);
+        } else {
+            console.error("Non-axios error:", error);
+        }
+        throw new ApiError(502, "Failed to fetch keywords for movie");
+    }
+};
