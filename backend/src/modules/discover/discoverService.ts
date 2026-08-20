@@ -7,6 +7,7 @@ import {
 } from "../../lib/tmdb.js";
 import prisma from "../../lib/prisma.js";
 import { movieEmbedQueue } from "../../lib/queue.js";
+import { getTmdbImageUrl } from "../../utils/utilstmdbImage.js";
 
 const TARGET_MOVIE_COUNT = 3000;
 const DELAY_MS = 1500;
@@ -70,8 +71,8 @@ export async function ingestPopularMovies() {
                     releaseDate: tm.release_date ? new Date(tm.release_date) : null,
                     runtime: details.runtime,
                     originalLanguage: tm.original_language,
-                    posterPath: tm.poster_path,
-                    backdropPath: tm.backdrop_path,
+                    posterPath: getTmdbImageUrl(tm.poster_path, "w500"),
+                    backdropPath: getTmdbImageUrl(tm.backdrop_path, "w1280"),
                     youtubeTrailerId: trailerKey,
                     popularity: tm.popularity,
                     voteAverage: tm.vote_average,

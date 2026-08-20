@@ -8,7 +8,7 @@ import { TasteSection } from "@/components/profile/TasteSection";
 import { ConnectedAccounts } from "@/components/profile/ConnectedAccounts";
 import { CollectionsGlimpse } from "@/components/profile/CollectionsGlimpse";
 import { EditProfileDialog } from "@/components/profile/EditProfileDialog";
-import { MovieCard } from "@/components/discover/MovieCard";
+import { MovieCard } from "@/components/discover/ContentSection";
 import { rows } from "@/lib/movie-data";
 import { collections } from "@/lib/collection-data";
 

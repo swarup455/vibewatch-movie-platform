@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { getMe } from "@/api/auth";
+import { getMe } from "@/api/auth-client";
 
 const trendingMovies = [
   { title: "Dune: Part Two", tag: "Sci-Fi", rating: "8.8", img: "https://images.unsplash.com/photo-1534809027769-b00d750a6bac?w=400&q=80" },

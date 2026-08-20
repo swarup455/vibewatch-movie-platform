@@ -33,9 +33,16 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
+enum MediaType {
+  MOVIE
+  TV
+}
+
 model Movie {
   id            String   @id @default(cuid())
   tmdbId        Int      @unique
+  type          MediaType @default(MOVIE)
+
   imdbId        String?  @unique
   title         String
   originalTitle String?
@@ -60,4 +67,5 @@ model Movie {
 
   @@index([popularity])
   @@index([releaseDate])
+  @@index([type])
 }

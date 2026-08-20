@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRouter from "./modules/auth/authRoutes.js";
+import discoverRouter from "./modules/discover/discoverRoutes.js";
 import { notFoundMiddleware } from "./middlewares/notFoundMiddleware.js";
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 import "./modules/discover/discover.worker.js"
@@ -20,6 +21,7 @@ app.use(cors({
 
 // ---------- All routes are mentioned here ----------
 app.use("/api/auth", authRouter);
+app.use("/api/discover", discoverRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

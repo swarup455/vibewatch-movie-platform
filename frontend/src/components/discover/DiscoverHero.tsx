@@ -1,34 +1,50 @@
 "use client";
 
 import Image from "next/image";
-import { Play, Info, Volume2, VolumeX, Star, Bookmark, Clock } from "lucide-react";
+import {
+    Play,
+    Info,
+    Volume2,
+    VolumeX,
+    Star,
+    Bookmark,
+    Clock,
+} from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import type { Movie } from "@/types/movie";
 
-const heroShow = {
-    title: "Obeysey",
-    match: 96,
-    rating: 8.7,
-    duration: "2h 18m",
-    meta: "Drama · Mystery · Thriller · 2026",
-    desc: "A mysterious story unfolds as hidden truths, fractured relationships, and unexpected events pull its characters into something far more complicated than they imagined.",
-    img: "/images/obbeysey.jpg",
+type DiscoverHeroProps = {
+    movie: Movie;
 };
 
-export function DiscoverHero() {
+export function DiscoverHero({ movie }: DiscoverHeroProps) {
     const [muted, setMuted] = useState(true);
     const [saved, setSaved] = useState(false);
 
+    const releaseYear = movie.releaseDate
+        ? new Date(movie.releaseDate).getFullYear()
+        : null;
+
+    const meta = [
+        ...movie.genres.slice(0, 3),
+        releaseYear,
+    ]
+        .filter(Boolean)
+        .join(" · ");
+
     return (
         <section className="relative flex min-h-[80vh] items-end overflow-hidden rounded-xl sm:min-h-[85vh]">
-            <Image
-                src={heroShow.img}
-                alt={heroShow.title}
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover transition-transform duration-700 hover:scale-[1.02]"
-            />
+            {movie.backdropPath && (
+                <Image
+                    src={movie.backdropPath}
+                    alt={movie.title}
+                    fill
+                    priority
+                    sizes="100vw"
+                    className="object-cover transition-transform duration-700 hover:scale-[1.02]"
+                />
+            )}
 
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
@@ -45,30 +61,44 @@ export function DiscoverHero() {
             <div className="relative z-10 w-full px-6 pb-12 sm:px-10 sm:pb-16 lg:px-16">
                 <div className="max-w-md">
                     <p className="mb-3 text-xs font-medium tracking-wide text-muted-foreground">
-                        Match of the Day · {heroShow.match}% Match
+                        Match of the Day
                     </p>
 
                     <h1 className="text-2xl font-medium leading-tight tracking-tight text-foreground sm:text-4xl">
-                        {heroShow.title}
+                        {movie.title}
                     </h1>
 
                     <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground sm:text-sm">
                         <span className="flex items-center gap-1 font-medium text-foreground">
-                            <Star size={12} className="fill-amber-400 text-amber-400" />
-                            {heroShow.rating}
+                            <Star
+                                size={12}
+                                className="fill-amber-400 text-amber-400"
+                            />
+                            {movie.voteAverage.toFixed(1)}
                         </span>
+
                         <span className="text-border">|</span>
-                        <span className="flex items-center gap-1">
-                            <Clock size={12} />
-                            {heroShow.duration}
-                        </span>
-                        <span className="text-border">|</span>
-                        <span>{heroShow.meta}</span>
+
+                        {movie.runtime && (
+                            <>
+                                <span className="flex items-center gap-1">
+                                    <Clock size={12} />
+                                    {Math.floor(movie.runtime / 60)}h{" "}
+                                    {movie.runtime % 60}m
+                                </span>
+
+                                <span className="text-border">|</span>
+                            </>
+                        )}
+
+                        <span>{meta}</span>
                     </div>
 
-                    <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground/90">
-                        {heroShow.desc}
-                    </p>
+                    {movie.overview && (
+                        <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground/90">
+                            {movie.overview}
+                        </p>
+                    )}
 
                     <div className="mt-6 flex items-center gap-2">
                         <Button
@@ -95,7 +125,11 @@ export function DiscoverHero() {
                 onClick={() => setMuted((m) => !m)}
                 className="absolute bottom-6 right-6 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border/40 bg-background/40 text-foreground backdrop-blur-xl transition-colors hover:bg-background/60 sm:right-10 lg:right-16"
             >
-                {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                {muted ? (
+                    <VolumeX size={13} />
+                ) : (
+                    <Volume2 size={13} />
+                )}
             </button>
         </section>
     );

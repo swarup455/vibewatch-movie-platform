@@ -1,7 +1,22 @@
 export type Movie = {
+  id: string;
+  tmdbId: number;
+  imdbId: string | null;
   title: string;
-  match: number;
-  year: number;
-  genre: string;
-  img: string;
+  originalTitle: string | null;
+  overview: string | null;
+  genres: string[];
+  keywords: string[];
+  releaseDate: string | null;
+  runtime: number | null;
+  originalLanguage: string | null;
+  posterPath: string | null;
+  backdropPath: string | null;
+  youtubeTrailerId: string | null;
+  popularity: number;
+  voteAverage: number;
+  voteCount: number;
+  embeddedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 };

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { collections } from "@/lib/collection-data";
-import { MovieCard } from "@/components/discover/MovieCard";
+import { MovieCard } from "@/components/discover/ContentSection";
 
 type Props = {
     params: Promise<{

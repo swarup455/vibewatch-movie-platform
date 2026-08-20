@@ -7,7 +7,7 @@ import { AccountSection } from "@/components/settings/AccountSection";
 import { PreferencesSection } from "@/components/settings/PreferencesSection";
 import { ConnectedAccounts } from "@/components/profile/ConnectedAccounts";
 import { DangerZone } from "@/components/settings/DangerZone";
-import { logoutUser } from "@/api/auth";
+import { logoutUser } from "@/api/auth-server";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 

@@ -1,6 +1,13 @@
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { apiFetch } from "@/lib/api";
+
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    ReactNode,
+} from "react";
+import clientApi from "@/lib/client-api";
 
 type User = {
     id: string;
@@ -23,13 +30,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     const fetchUser = async () => {
         try {
-            const res = await apiFetch("/api/auth/me");
-            if (res.ok) {
-                const data = await res.json();
-                setUser(data.user);
-            } else {
-                setUser(null);
-            }
+            const response = await clientApi.get("/api/auth/me");
+
+            setUser(response.data.user);
         } catch {
             setUser(null);
         } finally {
@@ -42,7 +45,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, loading, refetchUser: fetchUser }}>
+        <UserContext.Provider
+            value={{
+                user,
+                loading,
+                refetchUser: fetchUser,
+            }}
+        >
             {children}
         </UserContext.Provider>
     );
@@ -50,6 +59,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
 export const useUser = () => {
     const ctx = useContext(UserContext);
-    if (!ctx) throw new Error("useUser must be used inside UserProvider");
+
+    if (!ctx) {
+        throw new Error(
+            "useUser must be used inside UserProvider"
+        );
+    }
+
     return ctx;
 };
